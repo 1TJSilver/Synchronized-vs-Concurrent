@@ -15,19 +15,15 @@ public class Main {
         ThreadGroup synchronizedGroup = new ThreadGroup("Synchronized");
 
         System.out.println("Filling the maps...");
-        fillMap(concurrentMap, VALUES);
-        fillMap(synchronizedMap, VALUES);
-
-
-
+        int[] array = generateArray(VALUES);
 
         System.out.println("Start an experiment");
 
         System.out.println("Current time: " + System.currentTimeMillis());
 
-        new ConcurrentThread(concurrentGroup, "Concurrent-1", concurrentMap).start();
-        new ConcurrentThread(concurrentGroup, "Concurrent-2", concurrentMap).start();
-        new ConcurrentThread(concurrentGroup, "Concurrent-3", concurrentMap).start();
+        new ConcurrentThread(concurrentGroup, "Concurrent-1", concurrentMap, array).start();
+        new ConcurrentThread(concurrentGroup, "Concurrent-2", concurrentMap, array).start();
+        new ConcurrentThread(concurrentGroup, "Concurrent-3", concurrentMap, array).start();
 
         waitAndFinish(concurrentGroup);
 
@@ -38,9 +34,9 @@ public class Main {
         System.out.println("Start a Synchronized group");
         System.out.println("Current time: " + System.currentTimeMillis());
 
-        new ConcurrentThread(synchronizedGroup, "Synchronized-1", synchronizedMap).start();
-        new ConcurrentThread(synchronizedGroup, "Synchronized-2", synchronizedMap).start();
-        new ConcurrentThread(synchronizedGroup, "Synchronized-3", synchronizedMap).start();
+        new ConcurrentThread(synchronizedGroup, "Synchronized-1", synchronizedMap, array).start();
+        new ConcurrentThread(synchronizedGroup, "Synchronized-2", synchronizedMap, array).start();
+        new ConcurrentThread(synchronizedGroup, "Synchronized-3", synchronizedMap, array).start();
 
         waitAndFinish(synchronizedGroup);
         System.out.println(synchronizedGroup.getName() + ": Total sum = " + ConcurrentThread.getSum());
@@ -48,11 +44,13 @@ public class Main {
         System.out.println("Current time: " + System.currentTimeMillis() + "\n");
     }
 
-    public static void fillMap(Map<Integer, Integer> map, int value) {
+    public static int[] generateArray (int value) {
+        int[] result = new int[AMOUNT];
         Random random = new Random();
         for (int i = 0; i < AMOUNT; i++) {
-            map.put(i, random.nextInt(value));
+            result[i] = random.nextInt(value);
         }
+        return result;
     }
 
     public static void waitAndFinish(ThreadGroup group) {
